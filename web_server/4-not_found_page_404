@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Configuring Nginx server to have a custom 404 page
+# Containing the string Ceci n'est pas une page
+
+sudo apt-get update
+sudo apt-get install -y nginx
+
+echo "Holberton School" | sudo tee /var/www/html/index.html
+
+# redirection config
+replacement="server_name _;\\
+    rewrite ^/redirect_me https://github.com permanent;"
+sudo sed -i "s|server_name _;|$replacement|" /etc/nginx/sites-available/default
+
+#creating 404 error page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+page="listen 80 default_server;\\n\\terror_page 404 /404.html;\\n\\tlocation = /404.html {\\n\\t\\troot /var/www/html;\\n\\t\\tinternal;\\n\\t}"
+sudo sed -i "s|listen 80 default_server;|$page|" /etc/nginx/sites-available/default
+
+# config testing and starting
+sudo nginx -t
+sudo service nginx restart
