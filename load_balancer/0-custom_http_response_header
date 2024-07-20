@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Bash script that configures a new Ubuntu machine nginx
+# Configuring Nginx HTTP response header
+
+sudo apt-get -y update
+sudo apt-get -y install nginx
+ufw allow  'Nginx HTTP'
+
+sudo echo "Holberton School" | sudo tee /var/www/html/index.html
+
+# redirection config
+replacement="server_name _;\\
+    rewrite ^/redirect_me https://github.com permanent;"
+sudo sed -i "s|server_name _;|$replacement|" /etc/nginx/sites-available/default
+
+#creating 404 error page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+page="listen 80 default_server;\\n\\terror_page 404 /404.html;\\n\\tlocation = /404.html {\\n\\t\\troot /var/www/html;\\n\\t\\tinternal;\\n\\t}"
+sudo sed -i "s|listen 80 default_server;|$page|" /etc/nginx/sites-available/default
+
+
+# Creating an HTTP response header
+sudo sed -i "/server_name _/a add_header X-Served-By $HOSTNAME;" /etc/nginx/sites-available/default
+
+
+# config testing and starting
+sudo nginx -t
+sudo service nginx start
