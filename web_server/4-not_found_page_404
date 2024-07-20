@@ -11,7 +11,7 @@ sudo apt-get update -y -qq && \
 echo -e "\nSetting up some minor stuff.\n"
 
 # starting nginx service
-sudo service nginx start
+sudo systemctl start nginx
 
 # allowing nginx on firewall
 sudo ufw allow 'Nginx HTTP'
@@ -30,10 +30,10 @@ echo -e "Holberton School" > /var/www/html/index.nginx-debian.html
 sudo sed -i '24i\	rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
 
 # Set up a 404 page
-echo "Ceci n'est pas une page" >> /var/www/html/error_404.html
+echo "Ceci n'est pas une page" > /var/www/html/error_404.html
 sudo sed -i '25i\	error_page 404 /error_404.html;' /etc/nginx/sites-available/default
 
 # Restarting nginx
-sudo service nginx restart
+sudo systemctl restart nginx
 
 echo -e "\nCompleted.\n"
